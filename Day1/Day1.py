@@ -9,7 +9,7 @@ def getFuelReqPartOne( mass ):
 		fuel = fuel + extraFuel
 		return fuel
 def getFuelReq( mass ):
-	fuel = math.floor(mass/3)-2
+	fuel = (mass//3)-2
 	if fuel < 0:
 		return 0
 	else:
