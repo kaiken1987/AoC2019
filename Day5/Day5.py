@@ -1,6 +1,10 @@
-ints = [3,0,4,0,99]
+ints = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,
+	1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,
+	999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
 
-input = open('inputs.txt','r')
+input = 0
+inputa = 1
+inputb = 5
 
 def getParam( pos, mode ) :
 	a = ints[pos]
@@ -18,20 +22,58 @@ def intercode():
 			b = getParam(pos+2,modes[2])
 			c = ints[pos+3]
 			ints[c] = a+b
-			pos += 4
+			if(c!=pos):
+				pos += 4
 		elif (opcode== 2):
 			a = getParam(pos+1,modes[3])
 			b = getParam(pos+2,modes[2])
 			c = ints[pos+3]
 			ints[c] = a * b
-			pos += 4
+			if(c!=pos):
+				pos += 4
 		elif (opcode== 3):
-			ints[ints[pos+1]] = int( input.readline() )
-			pos += 2
+			c = ints[pos+1]
+			ints[c] = input
+			if(c!=pos):
+				pos += 2
 		elif (opcode== 4):
 			a = getParam(pos+1,modes[3])
 			print( str( a ) )
 			pos += 2
+		elif (opcode== 5):
+			a = getParam(pos+1,modes[3])
+			b = getParam(pos+2,modes[2])
+			if a != 0 :
+				pos = b
+			else :
+				pos+=3
+		elif (opcode== 6):
+			a = getParam(pos+1,modes[3])
+			b = getParam(pos+2,modes[2])
+			if a == 0 :
+				pos = b
+			else :
+				pos+=3
+		elif (opcode== 7):
+			a = getParam(pos+1,modes[3])
+			b = getParam(pos+2,modes[2])
+			c = ints[pos+3]
+			if a < b :
+				ints[c] = 1
+			else :
+				ints[c] = 0
+			if(c!=pos):
+				pos += 4
+		elif (opcode== 8):
+			a = getParam(pos+1,modes[3])
+			b = getParam(pos+2,modes[2])
+			c = ints[pos+3]
+			if a == b :
+				ints[c] = 1
+			else :
+				ints[c] = 0
+			if(c!=pos):
+				pos += 4
 		elif (opcode==99):
 			print("DONE")
 			return True
@@ -47,5 +89,5 @@ inital = []
 f = open("C:\code\python\AdventOfCode\Day5\opcodes.txt", "r")
 for x in f:
 	ints.append( int(x) )
-
+input = inputa
 intercode()
