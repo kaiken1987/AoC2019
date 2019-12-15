@@ -15,20 +15,14 @@ def validTest(password) :
 	i = 0
 	while i <len(string)-1 :
 		if string[i]==string[i+1] :
-			hasDbl = True
 			#check for invalid 3x or 5x
-			cnt = 2
-			for j in range(i+2, len(string)) :
-				if(string[i]!=string[j]):
-					break
-				else:
-					cnt += 1
-			if (cnt == 3) or (cnt == 5) :
-				return False
+			cnt = string.count(string[i])
+			if( cnt == 2 ):
+				return True
 			i+=cnt
 		else:
 			i+=1
-	return hasDbl
+	return False
 tests = [112233, 123444, 111122, 333445, 444555, 667777, 233334, 233345, 223334, 112345]
 print( "Tests cases")
 for x in tests:
