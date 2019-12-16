@@ -15,6 +15,15 @@ def depth( name ) :
 		return 0
 	else :
 		return depth(orbits[name].parent) +1
+
+def trace( name, steps ) :
+	if( name == "") :
+		return 0
+	elif( name not in orbits) :
+		return 0
+	else :
+		steps.append(name)
+		return trace(orbits[name].parent, steps) +1
 	
 f = open("input.txt", "r")
 for x in f:
@@ -40,3 +49,19 @@ for name, x in orbits.items() :
 	indirect += x.depth
 print("Direct Orbits: " + str(direct))
 print("Indirect Orbits: " + str(indirect))
+
+stepsYou = []
+stepsSan = []
+trace( "YOU", stepsYou)
+trace( "SAN", stepsSan)
+
+transfers = 0
+for x in stepsYou :
+	if(x in stepsSan):
+		break
+	transfers += 1
+for x in stepsSan :
+	if(x in stepsYou):
+		break
+	transfers += 1
+print("Orbits transfers: " + str(transfers))
