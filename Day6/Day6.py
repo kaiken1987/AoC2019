@@ -8,16 +8,13 @@ class obj :
 
 orbits = {"COM": obj()}
 
-def trace( name, depth ):
-	if name not in orbits:
-		print( name + "not found")
-		return 1
-	cur = orbits[name]
-	cur.weight = 1
-	cur.dist = depth
-	for x in cur.sats :
-		cur.weight += trace(x, depth+1)
-	return cur.weight
+def depth( name ) :
+	if( name == "") :
+		return 0
+	elif( name not in orbits) :
+		return 0
+	else :
+		return depth(orbits[name].parent) +1
 	
 f = open("input.txt", "r")
 for x in f:
@@ -30,9 +27,16 @@ for x in f:
 		orbits[center] = obj()
 	if not (sat in orbits) :
 		orbits[sat] = obj(center)
+	else :
+		orbits[sat].parent = center
 	orbits[center].sats.append(sat)
 	
 print("Number of Objects: " + str(len(orbits)))
-
-orbitCnt = trace("COM", 0)
-print("Orbits: " + str(orbitCnt))
+direct = 0
+indirect = 0
+for name, x in orbits.items() :
+	direct += len(x.sats)
+	x.depth = depth(x.parent)
+	indirect += x.depth
+print("Direct Orbits: " + str(direct))
+print("Indirect Orbits: " + str(indirect))
