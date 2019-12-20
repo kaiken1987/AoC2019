@@ -94,7 +94,7 @@ def scan(origin):
 			tested.append(dist)
 	return len(tested)
 
-def scan2(origin, idx):
+def scan2(origin, searched):
 	tested = []
 	for pt in asteroids :
 		if(pt == origin): continue
@@ -111,19 +111,27 @@ def scan2(origin, idx):
 		elif(dist<tested[idx]):
 			tested[idx] = dist
 	tested.sort(key=lambda ast: ast.ang)
-	for f in tested : print( str(f) )
+
+	for i in range(len(tested)) : 
+		f = tested[i]
+		print( "%d: %d,%d"% (i,f.denom+origin.x, -f.num+origin.y) ) 
+
 	if(len(tested)<idx):
 		return frac(0,0)
-	return tested[idx]
+	f = tested[searched]
+	print( "%dth Asteroid: %d,%d"% (searched+1,f.denom+origin.x, -f.num+origin.y) ) 
+	return tested[searched]
 
 best = point(31,20)
-bestCnt = 319
+bestCnt = 0
 #look = scan2( best, 199 )
 
 for y in range(hei):
 	for x in range(wid) :
 		if(field[y][x]=='.') : continue
 		asteroids.append(point(x,y))
+
+#for part A
 def findBest():
 	idx = 0
 	for pt in asteroids :
@@ -133,6 +141,7 @@ def findBest():
 			best = pt
 			bestCnt = cnt 
 		print( "%d/%d" % (idx,len(asteroids)) )
+
 field[best.y] = field[best.y][0:best.x]+'*'+field[best.y][best.x+1:-1]
 print(field[best.y])
 print( "Best Point %d,%d with %d"% (best.x, best.y, bestCnt) )
@@ -140,4 +149,4 @@ print( "Best Point %d,%d with %d"% (best.x, best.y, bestCnt) )
 #print( "test atan2: ", str(math.atan2(0,5)))
 
 look = scan2( best, 199 )
-print( "200th Point %d,%d"% (look.num+best.x, look.denom+best.y) )
+#print( "200th Point %d,%d"% (look.num+best.x, look.denom+best.y) )
