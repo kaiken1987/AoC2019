@@ -11,13 +11,17 @@ class computer :
 		self.base  = 0
 		self.lastout = 0
 		self.inputs = []
-
-	def getParam(self, idx, mode ) :
-		a = self.ints[idx]
+		
+	def getPos(self, idx, mode ) :
+		a = idx
 		if( mode == '0'):
 			a = self.ints[a]
-		if( mode == '2'):
-			a = self.ints[a+self.base]
+		elif( mode == '2'):
+			a = self.ints[a]+self.base
+		return int(a)
+	def getParam(self, idx, mode ) :
+		a = self.getPos(idx, mode)
+		a = self.ints[a]
 		return int(a)
 
 	def intercode(self):
@@ -29,19 +33,19 @@ class computer :
 			if(opcode== 1):
 				a = self.getParam(self.pos+1,modes[3])
 				b = self.getParam(self.pos+2,modes[2])
-				c = self.ints[self.pos+3]
+				c = self.getPos(self.pos+3,modes[1])
 				self.ints[c] = a+b
 				if(c!=self.pos):
 					self.pos += 4
 			elif (opcode== 2):
 				a = self.getParam(self.pos+1,modes[3])
 				b = self.getParam(self.pos+2,modes[2])
-				c = self.ints[self.pos+3]
+				c = self.getPos(self.pos+3,modes[1])
 				self.ints[c] = a * b
 				if(c!=self.pos): 
 					self.pos += 4
 			elif (opcode== 3):
-				c = self.ints[self.pos+1]
+				c = self.getPos(self.pos+1,modes[-1])
 				if( len(self.inputs)==0 ):
 					print('Not enough inputs')
 					print('Pos: '+str(self.pos))
@@ -75,7 +79,7 @@ class computer :
 			elif (opcode== 7):
 				a = self.getParam(self.pos+1,modes[3])
 				b = self.getParam(self.pos+2,modes[2])
-				c = self.ints[self.pos+3]
+				c = self.getPos(self.pos+3,modes[1])
 				if a < b :
 					self.ints[c] = 1
 				else :
@@ -85,7 +89,7 @@ class computer :
 			elif (opcode== 8):
 				a = self.getParam(self.pos+1,modes[3])
 				b = self.getParam(self.pos+2,modes[2])
-				c = self.ints[self.pos+3]
+				c = self.getPos(self.pos+3,modes[1])
 				if a == b :
 					self.ints[c] = 1
 				else :
@@ -106,7 +110,7 @@ class computer :
 				break
 		return True
 
-memory = []*1024
+memory = [None]*4096
 inital = [109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99]
 testa = computer(inital)
 inital = [1102,34915192,34915192,7,4,7,99,0]
@@ -114,16 +118,22 @@ testb = computer(inital)
 inital = [104,1125899906842624,99]
 testc = computer(inital)
 print( "TESTS")
-testa.intercode()
-testb.intercode()
-testc.intercode()
+#testa.intercode()
+#testb.intercode()
+#testc.intercode()
 
 print( "Day 9A")
 inital.clear()
 f = open("opcodes.txt", "r")
+cnt = 0
 for x in f:
-	inital.append( int(x) )
+	memory[cnt]= int(x)
+	cnt+=1
 
-comp = computer(inital)
-comp.inputs = [1]
+comp = computer(memory)
+comp.inputs = [2]
 comp.intercode()
+if(comp.finished):
+	print("Run success")
+else:
+	print("Run failed")
