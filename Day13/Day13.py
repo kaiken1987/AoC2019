@@ -1,3 +1,8 @@
+import curses
+
+screen = curses.initscr()
+#screen = curses.newwin(26,40,0,0)
+screen.clear()
 
 lastout = 0
 
@@ -21,17 +26,12 @@ class computer :
 		self.base  = 0
 		self.lastout = 0
 		self.inputs = []
-		self.panels = [panel(0,0)]
 		self.outmode = 0
 		self.x = 0
 		self.y = 0
-		self.minx = 0
-		self.miny = 0
-		self.maxx = 0
-		self.maxy = 0
-		self.screen = []
-		for x in range(20) :
-			self.screen.append("0000000000000000000000000000000000000000")
+		self.score = 0
+		self.paddle = (0,0)
+		self.ball = (0,0)
 
 	def getPos(self, idx, mode ) :
 		a = idx
@@ -44,10 +44,10 @@ class computer :
 		a = self.getPos(idx, mode)
 		a = self.ints[a]
 		return int(a)
-
+	def printScreen(self) :
+		screen.addstr(21,0, "Score: {}".format(self.score))
+		screen.refresh()
 	def intercode(self):
-		global inputs
-		global lastout
 		while self.pos < len(self.ints) :
 			opcode = self.ints[self.pos] % 100
 			modes = str(self.ints[self.pos] // 100+10000)
@@ -68,37 +68,47 @@ class computer :
 					self.pos += 4
 			elif (opcode== 3):
 				c = self.getPos(self.pos+1,modes[0])
-				if( len(self.inputs)==0 ):
-					print('Not enough inputs')
-					print('Pos: '+str(self.pos))
-					print('Dumping Memory\n'+str(self.ints))
-					return True
-				self.ints[c] = self.inputs[-1]
-				self.inputs = self.inputs[:-1]
+				#self.printScreen()
+				screen.addstr(21,0, "Score: {}".format(self.score))
+				screen.refresh()
+				stick = 3
+				while stick == 3 :
+					#key = screen.getkey()
+					if self.ball[0]<self.paddle[0] :#key[0]=='a' :
+						stick = -1
+					elif self.ball[0]==self.paddle[0] :#key[0]=='s' :
+						stick = 0
+					elif self.ball[0]>self.paddle[0] :#key[0]=='d' :
+						stick = 1
+				self.ints[c] = stick
 				if(c!=self.pos):
 					self.pos += 2
 			elif (opcode== 4):
 				a = self.getParam(self.pos+1,modes[0])
 				if self.outmode == 0 :
 					self. x = a
-					self.minx = min(a,self.minx)
-					self.maxx = max(a,self.maxx)
 					self.outmode = 1
 				elif self.outmode == 1 :
 					self.y = a
-					self.miny = min(a,self.miny)
-					self.maxy = max(a,self.maxy)
 					self.outmode = 2
 				else:
-					p = panel(self.x, self.y)
-					line = self.screen[self.y]
-					self.screen[self.y] = line[0:self.x]+str(a)+line[self.x+1:-1]
-					try :
-						idx = self.panels.index(p)
-						self.panels[idx].type = a
-					except :
-						p.type = a
-						self.panels.append(p)
+					if( self.x == -1 ):
+						self.score = a 
+					else:
+						if a == 0 :
+							screen.addch(self.y,self.x,' ')
+						elif a == 1 :
+							screen.addch(self.y,self.x,'X')
+						elif a == 2 :
+							screen.addch(self.y,self.x,'■')
+						elif a == 3 :
+							screen.addch(self.y,self.x,'♣')
+							self.paddle = (self.x,self.y)
+						elif a == 4 :
+							screen.addch(self.y,self.x,'O')
+							self.ball = (self.x,self.y)
+						else:
+							screen.addch(self.y,self.x, str(a))
 					self.outmode = 0
 				self.pos += 2
 				#return False
@@ -167,13 +177,8 @@ for x in f:
 comp = computer(memory)
 comp.intercode()
 
-print( "Day 11A")
 blocks = 0
-for p in comp.panels :
-	if(p.type == 2):
-		blocks += 1
-for p in comp.screen :
-	print( p )
 
+comp.printScreen()
 
 print( "Blocks: " + str(blocks) )
