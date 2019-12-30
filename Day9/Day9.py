@@ -29,23 +29,24 @@ class computer :
 		global lastout
 		while self.pos < len(self.ints) :
 			opcode = self.ints[self.pos] % 100
-			modes = str(self.ints[self.pos] // 100+1000)
+			modes = str(self.ints[self.pos] // 100+10000)
+			modes = modes[::-1]
 			if(opcode== 1):
-				a = self.getParam(self.pos+1,modes[3])
-				b = self.getParam(self.pos+2,modes[2])
-				c = self.getPos(self.pos+3,modes[1])
+				a = self.getParam(self.pos+1,modes[0])
+				b = self.getParam(self.pos+2,modes[1])
+				c = self.getPos(self.pos+3,modes[2])
 				self.ints[c] = a+b
 				if(c!=self.pos):
 					self.pos += 4
 			elif (opcode== 2):
-				a = self.getParam(self.pos+1,modes[3])
-				b = self.getParam(self.pos+2,modes[2])
-				c = self.getPos(self.pos+3,modes[1])
+				a = self.getParam(self.pos+1,modes[0])
+				b = self.getParam(self.pos+2,modes[1])
+				c = self.getPos(self.pos+3,modes[2])
 				self.ints[c] = a * b
 				if(c!=self.pos): 
 					self.pos += 4
 			elif (opcode== 3):
-				c = self.getPos(self.pos+1,modes[-1])
+				c = self.getPos(self.pos+1,modes[0])
 				if( len(self.inputs)==0 ):
 					print('Not enough inputs')
 					print('Pos: '+str(self.pos))
@@ -53,33 +54,32 @@ class computer :
 					return True
 				self.ints[c] = self.inputs[-1]
 				self.inputs = self.inputs[:-1]
-				self.inputs = self.inputs[:-1]
 				if(c!=self.pos):
 					self.pos += 2
 			elif (opcode== 4):
-				a = self.getParam(self.pos+1,modes[3])
+				a = self.getParam(self.pos+1,modes[0])
 				lastout = int(a)
 				print( str( a ) )
 				self.pos += 2
 				#return False
 			elif (opcode== 5):
-				a = self.getParam(self.pos+1,modes[3])
-				b = self.getParam(self.pos+2,modes[2])
+				a = self.getParam(self.pos+1,modes[0])
+				b = self.getParam(self.pos+2,modes[1])
 				if a != 0 :
 					self.pos = b
 				else :
 					self.pos+=3
 			elif (opcode== 6):
-				a = self.getParam(self.pos+1,modes[3])
-				b = self.getParam(self.pos+2,modes[2])
+				a = self.getParam(self.pos+1,modes[0])
+				b = self.getParam(self.pos+2,modes[1])
 				if a == 0 :
 					self.pos = b
 				else :
 					self.pos+=3
 			elif (opcode== 7):
-				a = self.getParam(self.pos+1,modes[3])
-				b = self.getParam(self.pos+2,modes[2])
-				c = self.getPos(self.pos+3,modes[1])
+				a = self.getParam(self.pos+1,modes[0])
+				b = self.getParam(self.pos+2,modes[1])
+				c = self.getPos(self.pos+3,modes[2])
 				if a < b :
 					self.ints[c] = 1
 				else :
@@ -87,9 +87,9 @@ class computer :
 				if(c!=self.pos):
 					self.pos += 4
 			elif (opcode== 8):
-				a = self.getParam(self.pos+1,modes[3])
-				b = self.getParam(self.pos+2,modes[2])
-				c = self.getPos(self.pos+3,modes[1])
+				a = self.getParam(self.pos+1,modes[0])
+				b = self.getParam(self.pos+2,modes[1])
+				c = self.getPos(self.pos+3,modes[2])
 				if a == b :
 					self.ints[c] = 1
 				else :
@@ -97,7 +97,7 @@ class computer :
 				if(c!=self.pos):
 					self.pos += 4
 			elif (opcode== 9):
-				a = self.getParam(self.pos+1,modes[3])
+				a = self.getParam(self.pos+1,modes[0])
 				self.base += int(a)
 				self.pos += 2
 			elif (opcode==99):
